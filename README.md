@@ -1,16 +1,20 @@
-# flutter_todo_app
+flutter_todo_app
+===
 
 A new Flutter application.
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+```shell
+$ flutter doctor
+Doctor summary (to see all details, run flutter doctor -v):
+[✓] Flutter (Channel stable, v1.5.4-hotfix.2, on Mac OS X 10.14.5 18F132, locale
+    ja-JP)
+ 
+[✓] Android toolchain - develop for Android devices (Android SDK version 28.0.3)
+[✓] iOS toolchain - develop for iOS devices (Xcode 10.2.1)
+[✓] Android Studio (version 3.4)
+[✓] VS Code (version 1.34.0)
+[✓] Connected device (1 available)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+• No issues found!
+```

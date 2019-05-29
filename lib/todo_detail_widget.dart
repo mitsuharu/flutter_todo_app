@@ -20,14 +20,19 @@ class TodoDetailWidget extends StatefulWidget{
 
 class TodoDetailState extends State<TodoDetailWidget> {
 
+
+  final textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
 
     // todoデータの有無で追加か編集のタイトルを変える
     if (widget.todo == null){
       widget.title = Constant.detail.addTitle;
+      widget.todo = Todo.a();
     }else{
       widget.title = Constant.detail.editTitle;
+      textController.text = widget.todo.title;
     }
 
     return Scaffold(
@@ -43,6 +48,19 @@ class TodoDetailState extends State<TodoDetailWidget> {
 //            },
 //          ),
 //        ],
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(20.0),
+        child: Column(
+          children: <Widget>[
+            TextField(
+              controller: textController,
+              decoration: InputDecoration(
+                  labelText: "Todo Name",
+                  hintText: "すること"),
+            ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.done),
@@ -80,9 +98,9 @@ class TodoDetailState extends State<TodoDetailWidget> {
 
   void addTodo(){
 
-    var temp = DateTime.now().toIso8601String();
-    var todo = Todo(name: "新しい掃除 $temp");
-    Navigator.of(context).pop(todo);
+    widget.todo.title = textController.text;
+
+    Navigator.of(context).pop(widget.todo);
 
   }
 

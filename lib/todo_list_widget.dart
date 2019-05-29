@@ -8,10 +8,6 @@ class TodoListView extends StatefulWidget{
 
   String title = "title";
 
-  var items = <Widget>[];
-  var todoList = Todo.samples(); // <Todo>[];
-
-
   TodoListView({Key key, this.title}) : super(key: key);
 
   @override
@@ -19,22 +15,45 @@ class TodoListView extends StatefulWidget{
 }
 
 class TodoListViewState extends State<TodoListView> {
+  
+  List<Todo> todoList = <Todo>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    Todo.allTodo().then((temps){
+      if (temps != null) {
+        setState(() {
+          todoList = temps;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
+    print("[build]");
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.shopping_cart),
-            tooltip: 'Open shopping cart',
-            onPressed: () {
-              // Implement navigation to shopping cart page here...
-              print('Shopping cart opened.');
-            },
-          ),
-        ],
+//        actions: <Widget>[
+//          IconButton(
+//            icon: Icon(Icons.shopping_cart),
+//            tooltip: 'Open shopping cart',
+//            onPressed: () {
+//              // Implement navigation to shopping cart page here...
+//              print('Shopping cart opened.');
+//            },
+//          ),
+//        ],
       ),
       body: this.todoListView(null),
       floatingActionButton: FloatingActionButton(
@@ -46,11 +65,19 @@ class TodoListViewState extends State<TodoListView> {
   }
 
   ListView todoListView(Todo nextTodo){
+
+    var length = todoList.length;
+    print("[todoListView] $length");
+
+    if (length == 0){
+      return ListView();
+    }
+    
     return ListView.builder(
       itemBuilder: (BuildContext context, int index) {
 
-        var todo = widget.todoList[index];
-        var title = todo.name;
+        var todo = todoList[index];
+        var title = todo.title;
         var date = todo.dateString;
 
         return Container(
@@ -66,7 +93,7 @@ class TodoListViewState extends State<TodoListView> {
               onTap: () => editTodo(todo, index),
             ));
       },
-      itemCount: widget.todoList.length,
+      itemCount: todoList.length,
     );
   }
 
@@ -80,8 +107,9 @@ class TodoListViewState extends State<TodoListView> {
       MaterialPageRoute(builder: (context) => todoDetail),
     ).then((todo){
       if (todo != null && todo is Todo){
+        todo.save();
         setState(() {
-          widget.todoList.add(todo);
+          todoList.add(todo);
         });
       }
     });
@@ -97,8 +125,9 @@ class TodoListViewState extends State<TodoListView> {
       MaterialPageRoute(builder: (context) => todoDetail),
     ).then((nextTodo){
       if (nextTodo != null && nextTodo is Todo){
+        todo.save();
         setState(() {
-          widget.todoList.replaceRange(index, index+1, [nextTodo]);
+          todoList.replaceRange(index, index+1, [nextTodo]);
         });
       }
     });
