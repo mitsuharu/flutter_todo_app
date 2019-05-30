@@ -61,7 +61,7 @@ class Todo{
 
   Todo({this.title, this.updatedAt});
 
-  Todo.a() {
+  Todo.empty() {
     this.title = "";
     this.done = false;
     this.createdAt = DateTime.now();
@@ -102,12 +102,10 @@ class Todo{
     return temps;
   }
 
-
   Future save() async{
     try{
       TodoProvider p = TodoProvider();
       await p.open();
-
       var temp = await p.getTodo(this.id);
       if (temp == null){
         await p.insert(this);
@@ -115,12 +113,22 @@ class Todo{
         await p.update(this);
       }
       p.close();
-
     }catch (e) {
       print("[save] $e");
     }
-
   }
+
+  Future delete() async{
+    try{
+      TodoProvider p = TodoProvider();
+      await p.open();
+      await p.delete(this.id);
+      p.close();
+    }catch (e) {
+      print("[save] $e");
+    }
+  }
+
 }
 
 

@@ -4,6 +4,15 @@ import 'todo_model.dart';
 import 'todo_detail_widget.dart';
 
 
+abstract class TodoListViewCallbacks {
+  void describe();
+  void describeWithEmphasis() {
+    print('========');
+    describe();
+    print('========');
+  }
+}
+
 class TodoListView extends StatefulWidget{
 
   String title = "title";
@@ -14,8 +23,8 @@ class TodoListView extends StatefulWidget{
   TodoListViewState createState() => TodoListViewState();
 }
 
-class TodoListViewState extends State<TodoListView> {
-  
+class TodoListViewState extends State<TodoListView>  {
+
   List<Todo> todoList = <Todo>[];
 
   @override
@@ -105,11 +114,13 @@ class TodoListViewState extends State<TodoListView> {
 
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => todoDetail),
-    ).then((todo){
-      if (todo != null && todo is Todo){
-        todo.save();
+    ).then((response){
+      if (response != null
+          && response is TodoDetail
+          && response.mode == TodoDetailMode.add){
+        response.todo.save();
         setState(() {
-          todoList.add(todo);
+          todoList.add(response.todo);
         });
       }
     });
@@ -118,19 +129,27 @@ class TodoListViewState extends State<TodoListView> {
   void editTodo(Todo todo, int index) async{
     print("[editTodo] $index");
 
-    var todoDetail = TodoDetailWidget();
-    todoDetail.todo = todo;
+    var todoDetail = TodoDetailWidget(todo: todo);
 
     Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => todoDetail),
-    ).then((nextTodo){
-      if (nextTodo != null && nextTodo is Todo){
-        todo.save();
-        setState(() {
-          todoList.replaceRange(index, index+1, [nextTodo]);
-        });
+    ).then((response){
+      if (response != null && response is TodoDetail){
+        if (response.mode == TodoDetailMode.update){
+          response.todo.save();
+          setState(() {
+            todoList.replaceRange(index, index+1, [response.todo]);
+          });
+        }else if (response.mode == TodoDetailMode.delete){
+          response.todo.delete();
+          setState(() {
+            todoList.removeAt(index);
+          });
+        }
       }
     });
   }
+
+
 
 }

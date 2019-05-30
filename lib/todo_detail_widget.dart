@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'todo_model.dart';
 
+
+class TodoDetail{
+  Todo todo;
+  TodoDetailMode mode;
+}
+
 class TodoDetailWidget extends StatefulWidget{
 
   String title = Constant.detail.addTitle; //  addTodoViewTitle;
-
-//  var items = <Widget>[];
-//  var todoList = Todo.samples(); // <Todo>[];
-
-
   Todo todo;
 
   TodoDetailWidget({Key key, this.todo}) : super(key: key);
@@ -20,34 +21,32 @@ class TodoDetailWidget extends StatefulWidget{
 
 class TodoDetailState extends State<TodoDetailWidget> {
 
-
+  TodoDetail model = TodoDetail();
   final textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.todo == null){
+      widget.title = Constant.detail.addTitle;
+      model.todo = Todo.empty();
+      model.mode = TodoDetailMode.add;
+    }else{
+      widget.title = Constant.detail.editTitle;
+      textController.text = widget.todo.title;
+      model.todo = widget.todo;
+      model.mode = TodoDetailMode.update;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    // todoデータの有無で追加か編集のタイトルを変える
-    if (widget.todo == null){
-      widget.title = Constant.detail.addTitle;
-      widget.todo = Todo.a();
-    }else{
-      widget.title = Constant.detail.editTitle;
-      textController.text = widget.todo.title;
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-//        actions: <Widget>[
-//          IconButton(
-//            icon: Icon(Icons.shopping_cart),
-//            tooltip: 'Open shopping cart',
-//            onPressed: () {
-//              // Implement navigation to shopping cart page here...
-//              print('Shopping cart opened.');
-//            },
-//          ),
-//        ],
+        actions: appBarActions(),
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),
@@ -70,38 +69,57 @@ class TodoDetailState extends State<TodoDetailWidget> {
     );
   }
 
-//  ListView todoListView(Todo nextTodo){
-//    return ListView.builder(
-//      itemBuilder: (BuildContext context, int index) {
-//
-//        var todo = widget.todoList[index];
-//        var title = todo.name;
-//        var date = todo.dateString;
-//
-//        return Container(
-//            decoration: BoxDecoration(
-//              border: Border(
-//                bottom: BorderSide(color: Colors.black38),
-//              ),
-//            ),
-//            child: ListTile(
-//              leading: const Icon(Icons.android),
-//              title: Text(title),
-//              subtitle: Text(date),
-//              onTap: () => {},
-//            ));
-//      },
-//      itemCount: widget.todoList.length,
-//    );
-//  }
+  // modeによって表示するactionを変更する
+  List<Widget> appBarActions(){
+    if (model.mode == TodoDetailMode.update){
+      return <Widget>[
+        IconButton(
+          icon: Icon(Icons.delete),
+          tooltip: 'delete todo',
+          onPressed: () {
+            print('delete todo');
+            showDeleteAlert();
+          },
+        ),
+      ];
+    }else{
+      return null;
+    }
+  }
 
+
+  void showDeleteAlert(){
+    showDialog(context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text(Constant.alert.titleDeleteTodo),
+          content: Text(Constant.alert.messageDeleteTodo),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(Constant.alert.cancel),
+              onPressed: () => Navigator.pop<String>(context, Constant.alert.cancel),
+            ),
+            FlatButton(
+              child: Text(Constant.alert.ok),
+              onPressed: () => Navigator.pop<String>(context, Constant.alert.ok),
+            )
+          ],
+        )
+    ).then<void>((value){
+      print(value);
+
+      if (value == Constant.alert.ok){
+        // 削除する
+        model.mode = TodoDetailMode.delete;
+        Navigator.of(context).pop(model);
+      }
+
+    });
+
+  }
 
   void addTodo(){
-
-    widget.todo.title = textController.text;
-
-    Navigator.of(context).pop(widget.todo);
-
+    model.todo.title = textController.text;
+    Navigator.of(context).pop(model);
   }
 
 }
