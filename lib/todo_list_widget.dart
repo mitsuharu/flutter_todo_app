@@ -4,15 +4,6 @@ import 'todo_model.dart';
 import 'todo_detail_widget.dart';
 
 
-abstract class TodoListViewCallbacks {
-  void describe();
-  void describeWithEmphasis() {
-    print('========');
-    describe();
-    print('========');
-  }
-}
-
 class TodoListView extends StatefulWidget{
 
   String title = "title";
@@ -53,16 +44,15 @@ class TodoListViewState extends State<TodoListView>  {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-//        actions: <Widget>[
-//          IconButton(
-//            icon: Icon(Icons.shopping_cart),
-//            tooltip: 'Open shopping cart',
-//            onPressed: () {
-//              // Implement navigation to shopping cart page here...
-//              print('Shopping cart opened.');
-//            },
-//          ),
-//        ],
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete),
+            tooltip: 'delete all todo',
+            onPressed: () {
+              showDeleteAlert();
+            },
+          ),
+        ],
       ),
       body: this.todoListView(null),
       floatingActionButton: FloatingActionButton(
@@ -73,13 +63,15 @@ class TodoListViewState extends State<TodoListView>  {
     );
   }
 
-  ListView todoListView(Todo nextTodo){
+  Widget todoListView(Todo nextTodo){
 
     var length = todoList.length;
     print("[todoListView] $length");
 
     if (length == 0){
-      return ListView();
+      return Center(
+        child: Text(Constant.app.startTodoApp),
+      );
     }
     
     return ListView.builder(
@@ -148,6 +140,36 @@ class TodoListViewState extends State<TodoListView>  {
         }
       }
     });
+  }
+
+  void showDeleteAlert(){
+    showDialog(context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text(Constant.alert.titleDeleteTodo),
+          content: Text(Constant.alert.messageDeleteTodo),
+          actions: <Widget>[
+            FlatButton(
+              child: Text(Constant.alert.cancel),
+              onPressed: () => Navigator.pop<String>(context, Constant.alert.cancel),
+            ),
+            FlatButton(
+              child: Text(Constant.alert.ok),
+              onPressed: () => Navigator.pop<String>(context, Constant.alert.ok),
+            )
+          ],
+        )
+    ).then<void>((value){
+      print(value);
+
+      if (value == Constant.alert.ok){
+        // 削除する
+        Todo.deleteAll();
+        setState(() {
+          todoList.removeRange(0, todoList.length);
+        });
+      }
+    });
+
   }
 
 

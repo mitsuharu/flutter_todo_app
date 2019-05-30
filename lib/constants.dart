@@ -7,6 +7,11 @@ class Constant{
 
   static var detail = Detail();
   static var alert = Alert();
+  static var app = App();
+}
+
+class App{
+  final String startTodoApp = "TODOを追加しよう";
 }
 
 class Detail{
@@ -19,7 +24,7 @@ class Alert{
   final String ok = "OK";
 
   final String titleDeleteTodo = "削除の確認";
-  final String messageDeleteTodo = "このTodoを削除しますか？";
+  final String messageDeleteTodo = "Todoを削除しますか？";
 
 }
 

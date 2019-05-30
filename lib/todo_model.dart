@@ -135,6 +135,17 @@ class Todo{
     }
   }
 
+  static Future deleteAll() async{
+    try{
+      TodoProvider p = TodoProvider();
+      await p.open();
+      await p.deleteAll();
+      p.close();
+    }catch (e) {
+      print("[save] $e");
+    }
+  }
+
 }
 
 
@@ -214,6 +225,10 @@ create table $tableTodo (
 
   Future<int> delete(int id) async {
     return await db.delete(tableTodo, where: '$columnId = ?', whereArgs: [id]);
+  }
+
+  Future<int> deleteAll() async {
+    return await db.delete(tableTodo);
   }
 
   Future<int> update(Todo todo) async {

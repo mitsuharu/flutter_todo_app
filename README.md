@@ -1,7 +1,15 @@
-flutter_todo_app
+flutter todo app
 ===
 
-A new Flutter application.
+Flutterの開発練習を兼ねた簡易TODOアプリです．
+
+
+- TODOを追加できる
+- TODOを編集・削除できる
+- TODOはローカルDBで管理される
+
+
+## Flutter環境
 
 
 ```shell
