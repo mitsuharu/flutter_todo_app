@@ -106,11 +106,15 @@ class Todo{
     try{
       TodoProvider p = TodoProvider();
       await p.open();
-      var temp = await p.getTodo(this.id);
-      if (temp == null){
+      if (this.id == null){
         await p.insert(this);
       }else{
-        await p.update(this);
+        var temp = await p.getTodo(this.id);
+        if (temp == null){
+          await p.insert(this);
+        }else{
+          await p.update(this);
+        }
       }
       p.close();
     }catch (e) {
@@ -122,7 +126,9 @@ class Todo{
     try{
       TodoProvider p = TodoProvider();
       await p.open();
-      await p.delete(this.id);
+      if (this.id != null){
+        await p.delete(this.id);
+      }
       p.close();
     }catch (e) {
       print("[save] $e");
