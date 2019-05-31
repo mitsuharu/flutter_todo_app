@@ -21,6 +21,8 @@ class TodoDetailWidget extends StatefulWidget{
 
 class TodoDetailState extends State<TodoDetailWidget> {
 
+  bool _isButtonDisabled = true;
+
   TodoDetail model = TodoDetail();
   final textController = TextEditingController();
 
@@ -38,6 +40,8 @@ class TodoDetailState extends State<TodoDetailWidget> {
       model.todo = widget.todo;
       model.mode = TodoDetailMode.update;
     }
+    _isButtonDisabled = ( widget.todo.title.length == 0);
+
   }
 
   @override
@@ -57,15 +61,20 @@ class TodoDetailState extends State<TodoDetailWidget> {
               decoration: InputDecoration(
                   labelText: "Todo Name",
                   hintText: "すること"),
+              onChanged: (str) {
+                setState(() {
+                  _isButtonDisabled = (str.length == 0);
+                });
+              },
             ),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.done),
-          onPressed: () {
-            addTodo();
-          }),
+          backgroundColor: _isButtonDisabled ? Colors.grey : Colors.blue,
+          onPressed: _isButtonDisabled ? null : () => addTodo(),
+      ),
     );
   }
 
